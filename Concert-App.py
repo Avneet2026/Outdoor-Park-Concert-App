@@ -3,9 +3,37 @@ This example code creates a 2d list (2d matrix) that can store seating.
 The matrix is populated with a since all seats are available
 """
 
+# our test matrix has 20 rows and 26 columns
+n_row = 20
+n_col = 26
+
+# available seat
+available_seat = 'a'
+unavailable_seat = 'X'
+# create some available seating
+seating = []
+
+def CreateSeating():
+    for r in range(n_row):
+        row = []
+        for c in range(n_col):
+            row.append(available_seat)
+        seating.append(row)
+
+def PrintSeating(seatData):
+    # print available seating
+    print('\t' + "a b c d e f g h i j k l m n o p q r s t u v w x y z")
+    for r in range(n_row):
+        print(r, end="\t")
+        for c in range(n_col):
+            print(seatData[r][c], end=" ")
+        print()
+
+
 userQuit = False
+CreateSeating()
 while (not userQuit):
-        # menu
+    # menu
     print()
     print("-----------------------")
     print("Welcome to the Concert!")
@@ -17,30 +45,6 @@ while (not userQuit):
     print("[V] view available seating")
     print("[Q] quit")
     print()
-
-
-    # our test matrix has 20 rows and 26 columns
-    n_row = 20
-    n_col = 26
-
-    # available seat
-    available_seat = 'a'
-    unavailable_seat = 'X'
-
-    # create some available seating
-    seating = []
-    for r in range(n_row):
-        row = []
-        for c in range(n_col):
-            row.append(available_seat)
-        seating.append(row)
-
-    # print available seating
-    for r in range(n_row):
-        print(r+1, end="\t")
-        for c in range(n_col):
-            print(seating[r][c], end=" ")
-        print()
 
     # get the user input
     userInput = input("Enter a command:")
@@ -87,3 +91,4 @@ while (not userQuit):
             - back seat price $ 25
                 - rows 11 - 19
         """
+        PrintSeating(seating)
