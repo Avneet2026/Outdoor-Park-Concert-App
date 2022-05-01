@@ -174,6 +174,13 @@ while (not userQuit):
         - displays tickets purchased by user with specific name
         """
         lookupUser = input("Please enter customers name to lookup tickets purchased:  ").lower()
+        if lookupUser in customerPurchases:
+            temp = customerPurchases[lookupUser]
+            print()
+            print(f"This customer ({lookupUser}) purchased {temp[1]} ticket(s). Seat(s) are {temp[0]}.")
+        else:
+            print()
+            print("Error! Customer not found.")
 
     # view available seating
     elif firstChar == 'v':
