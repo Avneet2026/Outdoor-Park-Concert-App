@@ -4,9 +4,17 @@ The matrix is populated with a since all seats are available
 """
 
 # our test matrix has 20 rows and 26 columns
+import re
+
+
 n_row = 20
 n_col = 26
-alphaToNum ={'a':0, 'b':1, 'c':2, 'd':3, 'e':4, 'f':5, 'g':6, 'h':7,
+FRONT_ROW_PRICE = 80
+MIDDLE_ROW_PRICE = 50
+BACK_ROW_PRICE = 25
+MASK_FEE = 5
+REGEX = re.compile(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+')
+alphaToNum = {'a':0, 'b':1, 'c':2, 'd':3, 'e':4, 'f':5, 'g':6, 'h':7,
              'i':8, 'j':9, 'k':10, 'l':11, 'm':12, 'n':13, 'o':14,
              'p':15, 'q':16, 'r':17, 's':18, 't':19, 'u':20, 'v':21,
              'w':22, 'x':23, 'y':24, 'z':25}
@@ -16,6 +24,7 @@ available_seat = 'a'
 unavailable_seat = 'X'
 # create some available seating
 seating = []
+customerPurchases = {}
 
 def CreateSeating():
     for r in range(n_row):
@@ -36,27 +45,63 @@ def PrintSeating():
 def SeatPricing():
     # print seating prices
     print()
-    print("Front Rows price: $80, Rows 0-4")
+    print("Front Rows price:  $80, Rows 0-4")
     print("Middle Rows price: $50, Rows 5-10")
-    print("Back Rows price: $25, Rows 11-19")
+    print("Back Rows price:   $25, Rows 11-19")
     print()
 
 def CheckAvail(seat):
     row = int(seat[0])
     column = alphaToNum[seat[1]]
-    if seating[row][column] == '-':
+    if seating[row][column] == 'X':
+        print("Sorry, this seat is occupied.")
+        return False
+    elif seating[row][column+1] == 'X' or seating[row][column+2] == 'X' or seating[row][column-1] == 'X' or seating[row][column-2] == 'X':
         print("Sorry, this seat is unavailable due to COVID restrictions.")
         return False
-    elif seating[row][column] == 'X':
-        print("Sorry, this seat is occupied.")
+    elif row in [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]:
+        print("Sorry, all odd rows are unavailable due to COVID restrictions.")
+        return False    
+
+def CheckForValidEmail(email):
+    if re.fullmatch(REGEX, email):
+        return True
+    else:
+        print("Error! Please provide a valid email address.")
         return False
 
 def BuyTickets(purchaseList):
+    ticketCosts = 0
     for x in purchaseList:
         row = int(x[0])
         column = alphaToNum[x[1]]
         seating[row][column] = 'X'
-    PrintSeating()
+        if (0 <= row <= 4):
+            ticketCosts = ticketCosts + FRONT_ROW_PRICE
+        elif (5 <= row <= 10):
+            ticketCosts = ticketCosts + MIDDLE_ROW_PRICE
+        elif (11 <= row <= 19):
+            ticketCosts = ticketCosts + BACK_ROW_PRICE
+
+    tax = 0.0725*ticketCosts    
+    totalCost = ticketCosts + tax + MASK_FEE
+    print()
+    print("------------------------")
+    print("--- PURCHASE SUMMARY ---")
+    print("------------------------")
+    print(f"Subtotal   = ${ticketCosts}")
+    print(f"State Tax  = ${tax}")
+    print(f"Mask Fee   = ${MASK_FEE}")
+    print(f"Total Cost = ${totalCost}")
+
+    print()
+    print()
+    userName = input("Please enter your name:   ").lower()
+    userEmail = input("Please enter your email:  ")
+    while (not(CheckForValidEmail(userEmail))):
+        userEmail = input("Please enter your email:  ")
+    
+    customerPurchases[userName] = [purchaseList, len(purchaseList), userEmail]
 
 
 userQuit = False
@@ -64,9 +109,9 @@ CreateSeating()
 while (not userQuit):
     # menu
     print()
-    print("-----------------------")
+    print("•••••••••••••••••••••••")
     print("Welcome to the Concert!")
-    print("-----------------------")
+    print("•••••••••••••••••••••••")
     print()
     print("[B] buy a ticket")
     print("[D] display all purchases")
@@ -98,6 +143,7 @@ while (not userQuit):
         numTickets = int(input("How many tickets would you like to buy?  "))
         ticketList = []
         print()
+        print("All odd rows are unavailable due to COVID restrictions.")
         print("When you choose your seat make sure to enter row number and column letter.")
         print("For example: row 1 column c would be 1c")
         print()
@@ -115,12 +161,6 @@ while (not userQuit):
         if seatChoice != 'm':
             BuyTickets(ticketList)
 
-        
-        # p = 
-        # tax = 0.0725(p)
-        # maskFee = 5
-        # total = p + tax + maskFee
-
 
     # display all purchases
     elif firstChar == 'd':
@@ -133,6 +173,7 @@ while (not userQuit):
         """
         - displays tickets purchased by user with specific name
         """
+        lookupUser = input("Please enter customers name to lookup tickets purchased:  ").lower()
 
     # view available seating
     elif firstChar == 'v':
