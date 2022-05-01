@@ -6,6 +6,10 @@ The matrix is populated with a since all seats are available
 # our test matrix has 20 rows and 26 columns
 n_row = 20
 n_col = 26
+alphaToNum ={'a':0, 'b':1, 'c':2, 'd':3, 'e':4, 'f':5, 'g':6, 'h':7,
+             'i':8, 'j':9, 'k':10, 'l':11, 'm':12, 'n':13, 'o':14,
+             'p':15, 'q':16, 'r':17, 's':18, 't':19, 'u':20, 'v':21,
+             'w':22, 'x':23, 'y':24, 'z':25}
 
 # available seat
 available_seat = 'a'
@@ -20,14 +24,39 @@ def CreateSeating():
             row.append(available_seat)
         seating.append(row)
 
-def PrintSeating(seatData):
+def PrintSeating():
     # print available seating
     print('\t' + "a b c d e f g h i j k l m n o p q r s t u v w x y z")
     for r in range(n_row):
         print(r, end="\t")
         for c in range(n_col):
-            print(seatData[r][c], end=" ")
+            print(seating[r][c], end=" ")
         print()
+
+def SeatPricing():
+    # print seating prices
+    print()
+    print("Front Rows price: $80, Rows 0-4")
+    print("Middle Rows price: $50, Rows 5-10")
+    print("Back Rows price: $25, Rows 11-19")
+    print()
+
+def CheckAvail(seat):
+    row = int(seat[0])
+    column = alphaToNum[seat[1]]
+    if seating[row][column] == '-':
+        print("Sorry, this seat is unavailable due to COVID restrictions.")
+        return False
+    elif seating[row][column] == 'X':
+        print("Sorry, this seat is occupied.")
+        return False
+
+def BuyTickets(purchaseList):
+    for x in purchaseList:
+        row = int(x[0])
+        column = alphaToNum[x[1]]
+        seating[row][column] = 'X'
+    PrintSeating()
 
 
 userQuit = False
@@ -63,6 +92,36 @@ while (not userQuit):
         - when purchase is made ask for name and email address
         """
 
+        PrintSeating()
+        SeatPricing()
+
+        numTickets = int(input("How many tickets would you like to buy?  "))
+        ticketList = []
+        print()
+        print("When you choose your seat make sure to enter row number and column letter.")
+        print("For example: row 1 column c would be 1c")
+        print()
+        for x in range(numTickets):
+            while True:
+                seatChoice = input(f"Pick seat #{x+1} (m to go to menu):  ").lower()
+                if seatChoice == 'm': # need to fix
+                    break
+                if CheckAvail(seatChoice) == False:
+                    continue
+                else:
+                    ticketList.append(seatChoice)
+                    break
+            
+        if seatChoice != 'm':
+            BuyTickets(ticketList)
+
+        
+        # p = 
+        # tax = 0.0725(p)
+        # maskFee = 5
+        # total = p + tax + maskFee
+
+
     # display all purchases
     elif firstChar == 'd':
         """
@@ -91,4 +150,4 @@ while (not userQuit):
             - back seat price $ 25
                 - rows 11 - 19
         """
-        PrintSeating(seating)
+        PrintSeating()
