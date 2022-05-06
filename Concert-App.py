@@ -168,6 +168,9 @@ while (not userQuit):
         - prints all purchases made
         - shows the total amount of money the venue has made
         """
+        print(customerPurchases)
+
+    
     # search by name
     elif firstChar == 's':
         """
