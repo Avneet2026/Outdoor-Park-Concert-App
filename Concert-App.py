@@ -128,6 +128,9 @@ while (not userQuit):
     # quit
     if firstChar == 'q':
         userQuit = True
+        print()
+        print("Thank you for purchasing tickets for the concert!!")
+        print()
     
     # buy a ticket
     elif firstChar == 'b':
