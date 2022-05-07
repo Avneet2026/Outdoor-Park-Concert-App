@@ -89,10 +89,10 @@ def BuyTickets(purchaseList):
     print("------------------------")
     print("--- PURCHASE SUMMARY ---")
     print("------------------------")
-    print(f"Subtotal   = ${ticketCosts}")
-    print(f"State Tax  = ${tax}")
-    print(f"Mask Fee   = ${MASK_FEE}")
-    print(f"Total Cost = ${totalCost}")
+    print(f"Subtotal   = ${ticketCosts:.2f}")
+    print(f"State Tax  = ${tax:.2f}")
+    print(f"Mask Fee   = ${MASK_FEE:.2f}")
+    print(f"Total Cost = ${totalCost:.2f}")
 
     print()
     print()
@@ -101,7 +101,7 @@ def BuyTickets(purchaseList):
     while (not(CheckForValidEmail(userEmail))):
         userEmail = input("Please enter your email:  ")
     
-    customerPurchases[userName] = [purchaseList, len(purchaseList), userEmail]
+    customerPurchases[userName] = [purchaseList, len(purchaseList), userEmail, totalCost]
 
 
 userQuit = False
@@ -168,7 +168,14 @@ while (not userQuit):
         - prints all purchases made
         - shows the total amount of money the venue has made
         """
-        print(customerPurchases)
+        venueMoney = 0
+        customerPurchases = {'a': [['2f'], 1, 'a@a.com', 10.0], 'g': [['4g', '4h'], 2, 'g@g.com', 5.0], 'm': [['6g'], 1, 'm@m.com', 15.0]}
+        for purchase in customerPurchases:
+            temp = customerPurchases[purchase]
+            print(f"This customer ({purchase}) purchased {temp[1]} ticket(s). Total price paid was ${temp[3]:.2f}.")
+            venueMoney = venueMoney + temp[3]
+        print()
+        print(f"This venue has made ${venueMoney}")
 
     
     # search by name
