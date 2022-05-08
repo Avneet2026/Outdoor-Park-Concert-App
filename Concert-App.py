@@ -1,3 +1,6 @@
+import json
+from json.decoder import JSONDecodeError
+
 """
 This example code creates a 2d list (2d matrix) that can store seating.
 The matrix is populated with a since all seats are available
@@ -24,7 +27,6 @@ available_seat = 'a'
 unavailable_seat = 'X'
 # create some available seating
 seating = []
-customerPurchases = {}
 
 def CreateSeating():
     for r in range(n_row):
@@ -118,11 +120,31 @@ def BuyTickets(purchaseList):
             break
         else:
             print("Error! Please provide a valid email address.")
-    customerPurchases[userName] = [purchaseList, len(purchaseList), userEmail, totalCost]
+
+    jsonData.append({
+        "name": userName,
+        "numTickets": len(purchaseList),
+        "seats": purchaseList,
+        "email": userEmail,
+        "totalCost": totalCost
+    })
+    with open("SavedSeatPurchases.json", 'w+') as json_file:
+        json.dump(jsonData, json_file, indent = 4, separators=(',',': '))
 
 
 userQuit = False
 CreateSeating()
+with open("SavedSeatPurchases.json", "r+") as myJson:
+    try:
+        jsonData = json.load(myJson)
+        for customer in jsonData:
+            for x in customer['seats']:
+                row, column = CheckRowSize(x)
+                seating[row][column] = 'X'
+    except JSONDecodeError:
+        jsonData=[]
+        print("File was empty, creating an empty list")
+
 while (not userQuit):
     # menu
     print()
@@ -199,10 +221,9 @@ while (not userQuit):
         - shows the total amount of money the venue has made
         """
         venueMoney = 0
-        for purchase in customerPurchases:
-            temp = customerPurchases[purchase]
-            print(f"This customer ({purchase}) purchased {temp[1]} ticket(s). Total price paid was ${temp[3]:.2f}.")
-            venueMoney = venueMoney + temp[3]
+        for customerPurchase in jsonData:
+            print(f"Customer ({customerPurchase['name']}) purchased {customerPurchase['numTickets']} ticket(s). Total price paid was ${customerPurchase['totalCost']:.2f}.")
+            venueMoney = venueMoney + customerPurchase['totalCost']
         print()
         print(f"The total money the venue has made is ${venueMoney}")
 
@@ -213,10 +234,11 @@ while (not userQuit):
         - displays tickets purchased by user with specific name
         """
         lookupUser = input("Please enter customers name to lookup tickets purchased:  ").lower()
-        if lookupUser in customerPurchases:
-            temp = customerPurchases[lookupUser]
-            print()
-            print(f"This customer ({lookupUser}) purchased {temp[1]} ticket(s). Seat(s) are {temp[0]}.")
+        for customer in jsonData:
+            if lookupUser == customer['name']:
+                print()
+                print(f"Customer ({lookupUser}) purchased {customer['numTickets']} ticket(s). Seat(s) are {customer['seats']}.")
+                break
         else:
             print()
             print("Error! Customer not found.")

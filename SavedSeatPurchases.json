@@ -1,0 +1,24 @@
+[
+    {
+        "name": "a",
+        "numTickets": 1,
+        "seats": [
+            "0a"
+        ],
+        "email": "a@a.com",
+        "totalCost": 90.8
+    },
+    {
+        "name": "avneet",
+        "numTickets": 5,
+        "seats": [
+            "4a",
+            "4b",
+            "4c",
+            "4d",
+            "4e"
+        ],
+        "email": "a@a.com",
+        "totalCost": 434.0
+    }
+]
