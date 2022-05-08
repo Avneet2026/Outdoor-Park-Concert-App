@@ -159,8 +159,13 @@ while (not userQuit):
 
         PrintSeating()
         SeatPricing()
-
-        numTickets = int(input("How many tickets would you like to buy?  "))
+        while True:
+            numTickets = input("How many tickets would you like to buy?  ")
+            if not (numTickets == ""):
+                numTickets = int(numTickets)
+                break
+            else:
+                print("Error! Number of tickets you are buying cannot be blank.")
         ticketList = []
         print()
         print("All odd rows are unavailable due to COVID restrictions.")
@@ -170,6 +175,9 @@ while (not userQuit):
         for x in range(numTickets):
             while True:
                 seatChoice = input(f"Pick seat #{x+1} (m to go to menu):  ").lower()
+                if (seatChoice == ""):
+                    print("Error! Seat choice cannot be blank.")
+                    continue
                 if seatChoice == 'm':
                     break
                 if CheckAvail(seatChoice) == False:
