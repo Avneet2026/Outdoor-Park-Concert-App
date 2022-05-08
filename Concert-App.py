@@ -50,31 +50,41 @@ def SeatPricing():
     print("Back Rows price:   $25, Rows 11-19")
     print()
 
+def CheckRowSize(seat):
+    if len(seat) == 3:
+        row = int(seat[0:2])
+        column = alphaToNum[seat[2]]
+    else:
+        row = int(seat[0])
+        column = alphaToNum[seat[1]]
+    return row, column
+
 def CheckAvail(seat):
-    row = int(seat[0])
-    column = alphaToNum[seat[1]]
-    if seating[row][column] == 'X':
+    row, column = CheckRowSize(seat)
+    if row in [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]:
+        print("Sorry, all odd rows are unavailable due to COVID restrictions.")
+        return False
+    elif seating[row][column] == 'X':
         print("Sorry, this seat is occupied.")
         return False
-    elif seating[row][column+1] == 'X' or seating[row][column+2] == 'X' or seating[row][column-1] == 'X' or seating[row][column-2] == 'X':
-        print("Sorry, this seat is unavailable due to COVID restrictions.")
-        return False
-    elif row in [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]:
-        print("Sorry, all odd rows are unavailable due to COVID restrictions.")
-        return False    
-
-def CheckForValidEmail(email):
-    if re.fullmatch(REGEX, email):
-        return True
+        
+    if column == 24:
+        if seating[row][column+1] == 'X' or seating[row][column-1] == 'X' or seating[row][column-2] == 'X':
+            print("Sorry, this seat is unavailable due to COVID restrictions.")
+            return False
+    elif column == 25:
+        if seating[row][column-1] == 'X' or seating[row][column-2] == 'X':
+            print("Sorry, this seat is unavailable due to COVID restrictions.")
+            return False
     else:
-        print("Error! Please provide a valid email address.")
-        return False
+        if seating[row][column+1] == 'X' or seating[row][column+2] == 'X' or seating[row][column-1] == 'X' or seating[row][column-2] == 'X':
+            print("Sorry, this seat is unavailable due to COVID restrictions.")
+            return False
 
 def BuyTickets(purchaseList):
     ticketCosts = 0
     for x in purchaseList:
-        row = int(x[0])
-        column = alphaToNum[x[1]]
+        row, column = CheckRowSize(x)
         seating[row][column] = 'X'
         if (0 <= row <= 4):
             ticketCosts = ticketCosts + FRONT_ROW_PRICE
@@ -96,11 +106,18 @@ def BuyTickets(purchaseList):
 
     print()
     print()
-    userName = input("Please enter your name:   ").lower()
-    userEmail = input("Please enter your email:  ")
-    while (not(CheckForValidEmail(userEmail))):
+    while True:
+        userName = input("Please enter your name:   ").lower()
+        if not (userName == ""):
+            break
+        else:
+            print("Error! Name cannot be blank.")
+    while True:
         userEmail = input("Please enter your email:  ")
-    
+        if re.fullmatch(REGEX, userEmail):
+            break
+        else:
+            print("Error! Please provide a valid email address.")
     customerPurchases[userName] = [purchaseList, len(purchaseList), userEmail, totalCost]
 
 
@@ -148,18 +165,20 @@ while (not userQuit):
         print()
         print("All odd rows are unavailable due to COVID restrictions.")
         print("When you choose your seat make sure to enter row number and column letter.")
-        print("For example: row 1 column c would be 1c")
+        print("For example: row 2 column c would be 2c")
         print()
         for x in range(numTickets):
             while True:
                 seatChoice = input(f"Pick seat #{x+1} (m to go to menu):  ").lower()
-                if seatChoice == 'm': # need to fix
+                if seatChoice == 'm':
                     break
                 if CheckAvail(seatChoice) == False:
                     continue
                 else:
                     ticketList.append(seatChoice)
                     break
+            if seatChoice == 'm':
+                break
             
         if seatChoice != 'm':
             BuyTickets(ticketList)
@@ -172,13 +191,12 @@ while (not userQuit):
         - shows the total amount of money the venue has made
         """
         venueMoney = 0
-        customerPurchases = {'a': [['2f'], 1, 'a@a.com', 10.0], 'g': [['4g', '4h'], 2, 'g@g.com', 5.0], 'm': [['6g'], 1, 'm@m.com', 15.0]}
         for purchase in customerPurchases:
             temp = customerPurchases[purchase]
             print(f"This customer ({purchase}) purchased {temp[1]} ticket(s). Total price paid was ${temp[3]:.2f}.")
             venueMoney = venueMoney + temp[3]
         print()
-        print(f"This venue has made ${venueMoney}")
+        print(f"The total money the venue has made is ${venueMoney}")
 
     
     # search by name
